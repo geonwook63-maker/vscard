@@ -15,7 +15,6 @@ function initProfileImage() {
 
   profileImage.addEventListener("error", handleImageError);
 
-  // 이미지 로딩이 이미 실패한 경우
   if (
     profileImage.complete &&
     profileImage.naturalWidth === 0
@@ -86,29 +85,24 @@ function initCardHover() {
     }
   };
 
-  // 초기 스타일
   updateTransition();
   applyNormalStyle();
 
-  // 카드 마우스 진입
   card.addEventListener(
     "mouseenter",
     applyHoverStyle
   );
 
-  // 카드 마우스 이탈
   card.addEventListener(
     "mouseleave",
     applyNormalStyle
   );
 
-  // 사용자 모션 설정 변경
   reducedMotion.addEventListener(
     "change",
     updateCardStyle
   );
 
-  // 포인터 환경 변경
   hoverSupported.addEventListener(
     "change",
     updateCardStyle
@@ -134,7 +128,6 @@ function initContactButtonHover() {
     "(hover: hover) and (pointer: fine)"
   );
 
-  // 버튼별 색상 설정
   const buttonColors = {
     email: {
       normal: "#0871d2",
@@ -157,7 +150,6 @@ function initContactButtonHover() {
     "0 10px 25px rgba(8, 113, 210, 0.4)";
 
   buttons.forEach((button) => {
-    // 버튼 종류 판별
     let buttonType = "email";
 
     if (button.classList.contains("phone-button")) {
@@ -211,29 +203,24 @@ function initContactButtonHover() {
       }
     };
 
-    // 초기 스타일
     updateTransition();
     applyNormalStyle();
 
-    // 마우스 진입
     button.addEventListener(
       "mouseenter",
       applyHoverStyle
     );
 
-    // 마우스 이탈
     button.addEventListener(
       "mouseleave",
       applyNormalStyle
     );
 
-    // 모션 설정 변경 대응
     reducedMotion.addEventListener(
       "change",
       updateButtonStyle
     );
 
-    // 포인터 환경 변경 대응
     hoverSupported.addEventListener(
       "change",
       updateButtonStyle
@@ -245,8 +232,6 @@ function initContactButtonHover() {
    4. 이메일 주소 클립보드 복사
 ========================= */
 function initEmailCopy() {
-  // 이메일 보내기 버튼은 제외
-  // 연락처에 표시된 이메일 주소만 복사
   const emailLinks = document.querySelectorAll(
     '.contact-info a[href^="mailto:"]'
   );
@@ -281,7 +266,7 @@ function initEmailCopy() {
         );
 
         showCopyMessage(
-          "복사에 실패했습니다. 이메일 주소를 직접 복사해 주세요."
+          "이메일 주소 복사에 실패했습니다."
         );
       }
     });
@@ -289,10 +274,51 @@ function initEmailCopy() {
 }
 
 /* =========================
-   5. 클립보드 복사 함수
+   5. 전화번호 클립보드 복사
+========================= */
+function initPhoneCopy() {
+  // 연락처의 전화번호만 복사 대상으로 설정
+  // 하단 전화하기 버튼은 제외
+  const phoneLinks = document.querySelectorAll(
+    '.contact-info a[href^="tel:"]'
+  );
+
+  if (phoneLinks.length === 0) return;
+
+  phoneLinks.forEach((link) => {
+    link.addEventListener("click", async (event) => {
+      // 전화 앱 실행 방지
+      event.preventDefault();
+
+      // 화면에 표시된 전화번호 추출
+      const phoneNumber = link.textContent.trim();
+
+      if (!phoneNumber) return;
+
+      try {
+        await copyToClipboard(phoneNumber);
+
+        showCopyMessage(
+          "전화번호가 복사되었습니다."
+        );
+      } catch (error) {
+        console.error(
+          "전화번호 복사 실패:",
+          error
+        );
+
+        showCopyMessage(
+          "전화번호 복사에 실패했습니다."
+        );
+      }
+    });
+  });
+}
+
+/* =========================
+   6. 클립보드 복사 함수
 ========================= */
 async function copyToClipboard(text) {
-  // Clipboard API 지원 환경
   if (
     window.isSecureContext &&
     navigator.clipboard &&
@@ -347,7 +373,7 @@ async function copyToClipboard(text) {
 }
 
 /* =========================
-   6. 복사 완료 알림 메시지
+   7. 복사 완료 알림 메시지
 ========================= */
 let copyMessageTimer = null;
 
@@ -401,13 +427,14 @@ function showCopyMessage(message) {
 }
 
 /* =========================
-   7. 초기화
+   8. 초기화
 ========================= */
 function init() {
   initProfileImage();
   initCardHover();
   initContactButtonHover();
   initEmailCopy();
+  initPhoneCopy();
 }
 
 if (document.readyState === "loading") {
