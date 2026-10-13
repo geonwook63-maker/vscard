@@ -25,8 +25,98 @@ function initProfileImage() {
 }
 
 /* =========================
-   2. 이메일 버튼 호버 효과
-   카드 전체에는 적용하지 않음
+   2. 카드 전체 호버 효과
+========================= */
+function initCardHover() {
+  const card = document.querySelector(".card");
+
+  if (!card) return;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  );
+
+  const hoverSupported = window.matchMedia(
+    "(hover: hover) and (pointer: fine)"
+  );
+
+  const normalShadow =
+    "0 15px 50px rgba(0, 0, 0, 0.45)";
+
+  const hoverShadow =
+    "0 22px 60px rgba(8, 113, 210, 0.25)";
+
+  const applyNormalStyle = () => {
+    card.style.transform = "translateY(0)";
+    card.style.boxShadow = normalShadow;
+  };
+
+  const applyHoverStyle = () => {
+    if (!hoverSupported.matches) {
+      applyNormalStyle();
+      return;
+    }
+
+    card.style.transform = reducedMotion.matches
+      ? "translateY(0)"
+      : "translateY(-4px)";
+
+    card.style.boxShadow = hoverShadow;
+  };
+
+  const updateTransition = () => {
+    card.style.transition = reducedMotion.matches
+      ? "none"
+      : [
+          "transform 0.25s ease",
+          "box-shadow 0.25s ease"
+        ].join(", ");
+  };
+
+  const updateCardStyle = () => {
+    updateTransition();
+
+    if (
+      hoverSupported.matches &&
+      card.matches(":hover")
+    ) {
+      applyHoverStyle();
+    } else {
+      applyNormalStyle();
+    }
+  };
+
+  // 초기 스타일
+  updateTransition();
+  applyNormalStyle();
+
+  // 카드 전체에 마우스 진입
+  card.addEventListener(
+    "mouseenter",
+    applyHoverStyle
+  );
+
+  // 카드 전체에서 마우스 이탈
+  card.addEventListener(
+    "mouseleave",
+    applyNormalStyle
+  );
+
+  // 사용자 모션 설정 변경 대응
+  reducedMotion.addEventListener(
+    "change",
+    updateCardStyle
+  );
+
+  // 마우스 환경 변경 대응
+  hoverSupported.addEventListener(
+    "change",
+    updateCardStyle
+  );
+}
+
+/* =========================
+   3. 이메일 버튼 호버 효과
 ========================= */
 function initEmailButtonHover() {
   const buttons = document.querySelectorAll(
@@ -93,28 +183,29 @@ function initEmailButtonHover() {
       }
     };
 
-    // 초기 스타일 설정
+    // 초기 스타일
     updateTransition();
     applyNormalStyle();
 
-    // 버튼에만 마우스 이벤트 등록
+    // 버튼 마우스 진입
     button.addEventListener(
       "mouseenter",
       applyHoverStyle
     );
 
+    // 버튼 마우스 이탈
     button.addEventListener(
       "mouseleave",
       applyNormalStyle
     );
 
-    // 사용자 모션 설정 변경
+    // 모션 설정 변경 대응
     reducedMotion.addEventListener(
       "change",
       updateButtonStyle
     );
 
-    // 포인터 환경 변경
+    // 포인터 환경 변경 대응
     hoverSupported.addEventListener(
       "change",
       updateButtonStyle
@@ -123,11 +214,11 @@ function initEmailButtonHover() {
 }
 
 /* =========================
-   3. 이메일 주소 클립보드 복사
+   4. 이메일 주소 클립보드 복사
 ========================= */
 function initEmailCopy() {
-  // 연락처 영역의 이메일 주소만 복사 대상으로 설정
   // 이메일 보내기 버튼은 제외
+  // 연락처 이메일 주소만 복사
   const emailLinks = document.querySelectorAll(
     '.contact-info a[href^="mailto:"]'
   );
@@ -170,7 +261,7 @@ function initEmailCopy() {
 }
 
 /* =========================
-   4. 클립보드 복사 함수
+   5. 클립보드 복사 함수
 ========================= */
 async function copyToClipboard(text) {
   // 최신 Clipboard API 지원 환경
@@ -228,7 +319,7 @@ async function copyToClipboard(text) {
 }
 
 /* =========================
-   5. 복사 완료 알림 메시지
+   6. 복사 완료 알림 메시지
 ========================= */
 let copyMessageTimer = null;
 
@@ -282,10 +373,11 @@ function showCopyMessage(message) {
 }
 
 /* =========================
-   6. 초기화
+   7. 초기화
 ========================= */
 function init() {
   initProfileImage();
+  initCardHover();
   initEmailButtonHover();
   initEmailCopy();
 }
