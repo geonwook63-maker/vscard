@@ -309,3 +309,12 @@ button:focus-visible {
     font-size: 12px;
   }
 }
+
+/* =========================
+   GitHub 프로필 버튼
+========================= */
+.github-button {
+  margin-top: 12px;
+  background: #243449;
+  border: 1px solid #45617f;
+}

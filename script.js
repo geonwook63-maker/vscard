@@ -15,6 +15,7 @@ function initProfileImage() {
 
   profileImage.addEventListener("error", handleImageError);
 
+  // 이미지 로딩이 이미 실패한 경우
   if (
     profileImage.complete &&
     profileImage.naturalWidth === 0
@@ -85,24 +86,29 @@ function initCardHover() {
     }
   };
 
+  // 초기 스타일
   updateTransition();
   applyNormalStyle();
 
+  // 카드 마우스 진입
   card.addEventListener(
     "mouseenter",
     applyHoverStyle
   );
 
+  // 카드 마우스 이탈
   card.addEventListener(
     "mouseleave",
     applyNormalStyle
   );
 
+  // 사용자 모션 설정 변경
   reducedMotion.addEventListener(
     "change",
     updateCardStyle
   );
 
+  // 포인터 환경 변경
   hoverSupported.addEventListener(
     "change",
     updateCardStyle
@@ -110,47 +116,128 @@ function initCardHover() {
 }
 
 /* =========================
-   3. 이메일/전화 버튼 호버 효과
+   3. 이메일 / 전화 / GitHub
+      버튼 호버 효과
 ========================= */
 function initContactButtonHover() {
-  const buttons = document.querySelectorAll(".contact-button");
-  if (!buttons.length) return;
+  const buttons = document.querySelectorAll(
+    ".contact-button"
+  );
+
+  if (buttons.length === 0) return;
 
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   );
+
   const hoverSupported = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
   );
 
+  // 버튼별 색상 설정
+  const buttonColors = {
+    email: {
+      normal: "#0871d2",
+      hover: "#0a84f5"
+    },
+    phone: {
+      normal: "#064a91",
+      hover: "#075db4"
+    },
+    github: {
+      normal: "#243449",
+      hover: "#334b68"
+    }
+  };
+
+  const normalShadow =
+    "0 4px 12px rgba(0, 0, 0, 0.2)";
+
+  const hoverShadow =
+    "0 10px 25px rgba(8, 113, 210, 0.4)";
+
   buttons.forEach((button) => {
-    const isPhone = button.classList.contains("phone-button");
-    const baseColor = isPhone ? "#064a91" : "#0871d2";
-    const hoverColor = isPhone ? "#075db4" : "#0a84f5";
-    const normalShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
-    const hoverShadow = "0 10px 25px rgba(8, 113, 210, 0.4)";
+    // 버튼 종류 판별
+    let buttonType = "email";
 
-    const updateStyle = () => {
-      const hovered = hoverSupported.matches && button.matches(":hover");
+    if (button.classList.contains("phone-button")) {
+      buttonType = "phone";
+    } else if (button.classList.contains("github-button")) {
+      buttonType = "github";
+    }
 
-      button.style.transition = reducedMotion.matches
-        ? "none"
-        : "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease";
+    const colors = buttonColors[buttonType];
 
-      button.style.transform = hovered && !reducedMotion.matches
-        ? "translateY(-4px)"
-        : "translateY(0)";
-
-      button.style.boxShadow = hovered ? hoverShadow : normalShadow;
-      button.style.backgroundColor = hovered ? hoverColor : baseColor;
+    const applyNormalStyle = () => {
+      button.style.transform = "translateY(0)";
+      button.style.boxShadow = normalShadow;
+      button.style.backgroundColor = colors.normal;
     };
 
-    button.addEventListener("mouseenter", updateStyle);
-    button.addEventListener("mouseleave", updateStyle);
-    reducedMotion.addEventListener("change", updateStyle);
-    hoverSupported.addEventListener("change", updateStyle);
+    const applyHoverStyle = () => {
+      if (!hoverSupported.matches) {
+        applyNormalStyle();
+        return;
+      }
 
-    updateStyle();
+      button.style.transform = reducedMotion.matches
+        ? "translateY(0)"
+        : "translateY(-4px)";
+
+      button.style.boxShadow = hoverShadow;
+      button.style.backgroundColor = colors.hover;
+    };
+
+    const updateTransition = () => {
+      button.style.transition = reducedMotion.matches
+        ? "none"
+        : [
+            "transform 0.25s ease",
+            "box-shadow 0.25s ease",
+            "background-color 0.25s ease"
+          ].join(", ");
+    };
+
+    const updateButtonStyle = () => {
+      updateTransition();
+
+      if (
+        hoverSupported.matches &&
+        button.matches(":hover")
+      ) {
+        applyHoverStyle();
+      } else {
+        applyNormalStyle();
+      }
+    };
+
+    // 초기 스타일
+    updateTransition();
+    applyNormalStyle();
+
+    // 마우스 진입
+    button.addEventListener(
+      "mouseenter",
+      applyHoverStyle
+    );
+
+    // 마우스 이탈
+    button.addEventListener(
+      "mouseleave",
+      applyNormalStyle
+    );
+
+    // 모션 설정 변경 대응
+    reducedMotion.addEventListener(
+      "change",
+      updateButtonStyle
+    );
+
+    // 포인터 환경 변경 대응
+    hoverSupported.addEventListener(
+      "change",
+      updateButtonStyle
+    );
   });
 }
 
@@ -158,6 +245,8 @@ function initContactButtonHover() {
    4. 이메일 주소 클립보드 복사
 ========================= */
 function initEmailCopy() {
+  // 이메일 보내기 버튼은 제외
+  // 연락처에 표시된 이메일 주소만 복사
   const emailLinks = document.querySelectorAll(
     '.contact-info a[href^="mailto:"]'
   );
@@ -203,6 +292,7 @@ function initEmailCopy() {
    5. 클립보드 복사 함수
 ========================= */
 async function copyToClipboard(text) {
+  // Clipboard API 지원 환경
   if (
     window.isSecureContext &&
     navigator.clipboard &&
@@ -212,6 +302,7 @@ async function copyToClipboard(text) {
     return;
   }
 
+  // Clipboard API 미지원 환경 대응
   const textarea = document.createElement(
     "textarea"
   );
