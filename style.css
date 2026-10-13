@@ -1,0 +1,270 @@
+/* =========================
+   기본 설정
+========================= */
+:root {
+  color-scheme: dark;
+  --background: #000000;
+  --white: #111827;
+  --primary: #0871d2;
+  --primary-hover: #1687ee;
+  --text: #f8fafc;
+  --subtext: #a6b4c8;
+  --border: #0871d2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--background);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+  color: var(--text);
+}
+
+/* =========================
+   명함 카드
+========================= */
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--white);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* =========================
+   상단 헤더
+========================= */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #a6b4c8;
+}
+
+.card-mark {
+  font-size: 20px;
+  color: var(--subtext);
+}
+
+/* =========================
+   프로필 영역
+========================= */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #1e293b;
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* 이미지 로딩 실패 시 기본 아바타 */
+.avatar-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #1e293b;
+  color: #93c5fd;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.avatar img:not([hidden]) + .avatar-fallback {
+  display: none;
+}
+
+.avatar img[hidden] {
+  display: none;
+}
+
+.profile-info {
+  min-width: 0;
+}
+
+.profile-info h1 {
+  margin: 0 0 7px;
+  font-size: calc(27px + 1pt);
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.job {
+  margin: 0 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.job-sub {
+  margin: 0;
+  font-size: 12px;
+  color: #a6b4c8;
+}
+
+.divider {
+  height: 1px;
+  margin: 30px 0;
+  background: var(--border);
+}
+
+/* =========================
+   연락처
+========================= */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.contact-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #1e293b;
+  color: #93c5fd;
+}
+
+.contact-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contact-info {
+  min-width: 0;
+}
+
+.contact-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #a6b4c8;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+}
+
+.contact-info a {
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.contact-info a:hover {
+  color: var(--primary);
+}
+
+/* =========================
+   이메일 버튼
+========================= */
+.contact-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 32px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.contact-button:hover {
+  background: var(--primary-hover);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+/* =========================
+   모바일 반응형
+========================= */
+@media (max-width: 480px) {
+  body {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .avatar {
+    width: 76px;
+    height: 76px;
+  }
+
+  .profile {
+    gap: 15px;
+  }
+
+  .profile-info h1 {
+    font-size: calc(24px + 1pt);
+  }
+}
+
+/* 모션 최소화 */
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .contact-button {
+    transition: none;
+  }
+}
