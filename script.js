@@ -15,7 +15,6 @@ function initProfileImage() {
 
   profileImage.addEventListener("error", handleImageError);
 
-  // 이미지 로딩이 이미 실패한 경우
   if (
     profileImage.complete &&
     profileImage.naturalWidth === 0
@@ -86,29 +85,24 @@ function initCardHover() {
     }
   };
 
-  // 초기 스타일
   updateTransition();
   applyNormalStyle();
 
-  // 카드 전체에 마우스 진입
   card.addEventListener(
     "mouseenter",
     applyHoverStyle
   );
 
-  // 카드 전체에서 마우스 이탈
   card.addEventListener(
     "mouseleave",
     applyNormalStyle
   );
 
-  // 사용자 모션 설정 변경 대응
   reducedMotion.addEventListener(
     "change",
     updateCardStyle
   );
 
-  // 마우스 환경 변경 대응
   hoverSupported.addEventListener(
     "change",
     updateCardStyle
@@ -116,100 +110,47 @@ function initCardHover() {
 }
 
 /* =========================
-   3. 이메일 버튼 호버 효과
+   3. 이메일/전화 버튼 호버 효과
 ========================= */
-function initEmailButtonHover() {
-  const buttons = document.querySelectorAll(
-    ".contact-button"
-  );
-
-  if (buttons.length === 0) return;
+function initContactButtonHover() {
+  const buttons = document.querySelectorAll(".contact-button");
+  if (!buttons.length) return;
 
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   );
-
   const hoverSupported = window.matchMedia(
     "(hover: hover) and (pointer: fine)"
   );
 
-  const normalShadow =
-    "0 4px 12px rgba(0, 0, 0, 0.2)";
-
-  const hoverShadow =
-    "0 10px 25px rgba(8, 113, 210, 0.4)";
-
   buttons.forEach((button) => {
-    const applyNormalStyle = () => {
-      button.style.transform = "translateY(0)";
-      button.style.boxShadow = normalShadow;
-      button.style.backgroundColor = "#0871d2";
-    };
+    const isPhone = button.classList.contains("phone-button");
+    const baseColor = isPhone ? "#064a91" : "#0871d2";
+    const hoverColor = isPhone ? "#075db4" : "#0a84f5";
+    const normalShadow = "0 4px 12px rgba(0, 0, 0, 0.2)";
+    const hoverShadow = "0 10px 25px rgba(8, 113, 210, 0.4)";
 
-    const applyHoverStyle = () => {
-      if (!hoverSupported.matches) {
-        applyNormalStyle();
-        return;
-      }
+    const updateStyle = () => {
+      const hovered = hoverSupported.matches && button.matches(":hover");
 
-      button.style.transform = reducedMotion.matches
-        ? "translateY(0)"
-        : "translateY(-4px)";
-
-      button.style.boxShadow = hoverShadow;
-      button.style.backgroundColor = "#0a84f5";
-    };
-
-    const updateTransition = () => {
       button.style.transition = reducedMotion.matches
         ? "none"
-        : [
-            "transform 0.25s ease",
-            "box-shadow 0.25s ease",
-            "background-color 0.25s ease"
-          ].join(", ");
+        : "transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease";
+
+      button.style.transform = hovered && !reducedMotion.matches
+        ? "translateY(-4px)"
+        : "translateY(0)";
+
+      button.style.boxShadow = hovered ? hoverShadow : normalShadow;
+      button.style.backgroundColor = hovered ? hoverColor : baseColor;
     };
 
-    const updateButtonStyle = () => {
-      updateTransition();
+    button.addEventListener("mouseenter", updateStyle);
+    button.addEventListener("mouseleave", updateStyle);
+    reducedMotion.addEventListener("change", updateStyle);
+    hoverSupported.addEventListener("change", updateStyle);
 
-      if (
-        hoverSupported.matches &&
-        button.matches(":hover")
-      ) {
-        applyHoverStyle();
-      } else {
-        applyNormalStyle();
-      }
-    };
-
-    // 초기 스타일
-    updateTransition();
-    applyNormalStyle();
-
-    // 버튼 마우스 진입
-    button.addEventListener(
-      "mouseenter",
-      applyHoverStyle
-    );
-
-    // 버튼 마우스 이탈
-    button.addEventListener(
-      "mouseleave",
-      applyNormalStyle
-    );
-
-    // 모션 설정 변경 대응
-    reducedMotion.addEventListener(
-      "change",
-      updateButtonStyle
-    );
-
-    // 포인터 환경 변경 대응
-    hoverSupported.addEventListener(
-      "change",
-      updateButtonStyle
-    );
+    updateStyle();
   });
 }
 
@@ -217,8 +158,6 @@ function initEmailButtonHover() {
    4. 이메일 주소 클립보드 복사
 ========================= */
 function initEmailCopy() {
-  // 이메일 보내기 버튼은 제외
-  // 연락처 이메일 주소만 복사
   const emailLinks = document.querySelectorAll(
     '.contact-info a[href^="mailto:"]'
   );
@@ -264,7 +203,6 @@ function initEmailCopy() {
    5. 클립보드 복사 함수
 ========================= */
 async function copyToClipboard(text) {
-  // 최신 Clipboard API 지원 환경
   if (
     window.isSecureContext &&
     navigator.clipboard &&
@@ -274,7 +212,6 @@ async function copyToClipboard(text) {
     return;
   }
 
-  // Clipboard API 미지원 환경 대응
   const textarea = document.createElement(
     "textarea"
   );
@@ -378,7 +315,7 @@ function showCopyMessage(message) {
 function init() {
   initProfileImage();
   initCardHover();
-  initEmailButtonHover();
+  initContactButtonHover();
   initEmailCopy();
 }
 

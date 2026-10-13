@@ -37,7 +37,7 @@ body {
 
 /* =========================
    명함 카드
-   카드 전체 호버 효과 제거
+   카드 호버는 JavaScript에서 제어
 ========================= */
 .card {
   width: 100%;
@@ -46,10 +46,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 24px;
   background: var(--white);
-  box-shadow:
-    0 15px 50px rgba(0, 0, 0, 0.45);
-
-  /* 카드 위치 및 그림자 고정 */
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.45);
   transform: none;
   transition: none;
 }
@@ -215,7 +212,7 @@ body {
 }
 
 /* =========================
-   이메일 보내기 버튼
+   공통 연락 버튼
    호버 효과는 JS에서 제어
 ========================= */
 .contact-button {
@@ -224,7 +221,6 @@ body {
   align-items: center;
   gap: 8px;
   width: 100%;
-  margin-top: 32px;
   padding: 16px;
   border: 0;
   border-radius: 12px;
@@ -235,8 +231,6 @@ body {
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-
-  /* JS에서 애니메이션 설정 */
   transition: none;
 }
 
@@ -279,5 +273,39 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .contact-button {
     transition: none;
+  }
+}
+
+/* =========================
+   하단 버튼 2열 레이아웃
+========================= */
+.contact-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.contact-actions .contact-button {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.email-button {
+  background: #0871d2;
+}
+
+.phone-button {
+  background: #064a91;
+}
+
+@media (max-width: 360px) {
+  .contact-actions {
+    gap: 8px;
+  }
+
+  .contact-actions .contact-button {
+    padding: 14px 8px;
+    font-size: 12px;
   }
 }
